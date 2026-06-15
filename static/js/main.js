@@ -402,4 +402,22 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.removeChild(link);
         showSuccessToast('CSV file downloaded successfully!');
     }
+
+    // Back to Top Button Logic
+    const backToTopBtn = document.getElementById('back-to-top-btn');
+    
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            backToTopBtn.classList.remove('hidden');
+        } else {
+            backToTopBtn.classList.add('hidden');
+        }
+    });
+
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
 });
