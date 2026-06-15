@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A premium, interactive web application to track and filter the latest Google Cloud BigQuery Release Notes with seamless social sharing capabilities.">
+    <title>Google Cloud BigQuery Release Notes Tracker</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Background elements for visual effects -->
+    <div class="glow-bg-1"></div>
+    <div class="glow-bg-2"></div>
+
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#grad1)" />
+                        <path d="M2 17L12 22L22 17M2 12L12 17L22 12" stroke="url(#grad2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <defs>
+                            <linearGradient id="grad1" x1="2" y1="2" x2="22" y2="12" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#3b82f6" />
+                                <stop offset="1" stop-color="#8b5cf6" />
+                            </linearGradient>
+                            <linearGradient id="grad2" x1="2" y1="12" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#60a5fa" />
+                                <stop offset="1" stop-color="#a78bfa" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>BigQuery Release Notes</h1>
+                    <p class="tagline">Stay updated with Google Cloud's data warehouse innovation</p>
+                </div>
+            </div>
+            
+            <div class="actions-area">
+                <button id="refresh-btn" class="btn btn-primary" aria-label="Refresh Release Notes">
+                    <span class="btn-text">Refresh Feed</span>
+                    <span class="spinner-icon hidden" id="spinner">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                            <circle cx="12" cy="12" r="10" opacity="0.25"></circle>
+                            <path d="M12 2C6.47715 2 2 6.47715 2 12C2 13.8443 2.50228 15.5714 3.37682 17.0514"></path>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats & Info Dashboard Banner -->
+        <section class="dashboard-banner">
+            <div class="stat-card">
+                <span class="stat-label">Feed Source</span>
+                <span class="stat-value font-mono">Google Cloud XML</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Last Checked</span>
+                <span id="last-checked-time" class="stat-value">Never</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Total Updates</span>
+                <span id="total-updates-count" class="stat-value">0</span>
+            </div>
+        </section>
+
+        <!-- Search and Filter Section -->
+        <section class="filter-controls">
+            <div class="search-wrapper">
+                <span class="search-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </span>
+                <input type="text" id="search-input" placeholder="Search release notes by keywords..." aria-label="Search release notes">
+            </div>
+
+            <div class="filter-pills-container">
+                <div class="filter-label">Filter Type:</div>
+                <div class="filter-pills" id="filter-pills">
+                    <button class="pill active" data-filter="all">All</button>
+                    <button class="pill" data-filter="Feature">Feature</button>
+                    <button class="pill" data-filter="Changed">Changed</button>
+                    <button class="pill" data-filter="Deprecated">Deprecated</button>
+                    <button class="pill" data-filter="Other">Others</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Release Notes Timeline / List -->
+        <main class="feed-main-content">
+            <!-- Loading State -->
+            <div id="feed-loading" class="state-container hidden">
+                <div class="large-spinner"></div>
+                <p>Fetching the latest release notes from Google Cloud...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="feed-error" class="state-container error-state hidden">
+                <div class="error-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <h3>Failed to load release notes</h3>
+                <p id="error-message">Unknown error occurred</p>
+                <button id="retry-btn" class="btn btn-secondary">Try Again</button>
+            </div>
+
+            <!-- Empty State -->
+            <div id="feed-empty" class="state-container hidden">
+                <div class="empty-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </div>
+                <h3>No matching release notes found</h3>
+                <p>Try adjusting your search keywords or filter selection.</p>
+            </div>
+
+            <!-- Notes List -->
+            <div id="notes-timeline" class="notes-timeline">
+                <!-- Programmatically populated -->
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>BigQuery Release Notes Tracker &copy; 2026. Made with ❤️ for developers.</p>
+            <p class="source-link">Data retrieved dynamically from <a href="https://docs.cloud.google.com/feeds/bigquery-release-notes.xml" target="_blank" rel="noopener noreferrer">Google Cloud Documentation Feed</a>.</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Script -->
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
