@@ -631,10 +631,48 @@ body {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    gap: 0.75rem;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     padding-top: 1rem;
     margin-top: auto;
 }
+
+.actions-area {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.btn-copy {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    font-size: 0.8rem;
+    padding: 0.45rem 1rem;
+    border-radius: 2rem;
+    cursor: pointer;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    font-family: var(--font-sans);
+}
+
+.btn-copy:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border-color: var(--border-color-hover);
+    transform: translateY(-1px);
+}
+
+.btn-copy svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    fill: none;
+    stroke: currentColor;
+}
+
 
 .btn-tweet {
     background: rgba(29, 155, 240, 0.08);
